@@ -22,18 +22,16 @@ public class OI {
 	final public int[] climbSlowButtonNum = {1,2};
 	final public int[] climbFastButtonNum = {3,4};
 	//Joystick Button
-	final public int noGyroButtonNum = 1;
-	final public int noTurnButtonNum = 2;
-	final public int halfSensButtonNum = 3;
-	final public int resetGyroButtonNum  = 4;
-	final public int climbViewButtonNum = 5;
-	final public int gearViewButtonNum = 6;
-	final public int sensitivityLowButtonNum = 1;
+	final public int noGyroButtonNum = 7;
+	final public int noTurnButtonNum = 8;
+	final public int resetGyroButtonNum  = 12;
+	final public int climbViewButtonNum = 11;
+	final public int gearViewButtonNum = 1;
+	final public int sensitivityLowButtonNum = 2;
 	//Button Objects
 	public Button resetGyroButton = new JoystickButton(joystick, resetGyroButtonNum);
 	public Button noGyroButton = new JoystickButton(joystick,noGyroButtonNum);
 	public Button noTurnButton = new JoystickButton(joystick,noTurnButtonNum);
-	public Button halfSensButton = new JoystickButton(joystick,halfSensButtonNum);
 	public Button climbViewButton = new JoystickButton(joystick,climbViewButtonNum);
 	public Button gearViewButton = new JoystickButton(joystick, gearViewButtonNum);
 	//Triggers

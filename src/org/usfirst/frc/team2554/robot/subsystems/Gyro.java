@@ -1,6 +1,5 @@
 package org.usfirst.frc.team2554.robot.subsystems;
 
-import org.usfirst.frc.team2554.robot.commands.InitGyroCommand;
 import org.usfirst.frc.team2554.robot.commands.ResetGyro;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -22,7 +21,7 @@ public class Gyro extends Subsystem {
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
-    	setDefaultCommand(new InitGyroCommand());
+    	setDefaultCommand(new ResetGyro());
     }
     public void calibrate(){
     	gyro.calibrate();
@@ -54,10 +53,10 @@ public class Gyro extends Subsystem {
     }
     public double get(){
     	if(isGearView)
-    		return 90; //Change Angle
+    		return 180; //Change Angle
     	else
     		if(isClimbView)
-    			return 270; //Change Angle
+    			return 0; //Change Angle
     		else
     			if(isGyro)
     				return gyro.getAngle();
