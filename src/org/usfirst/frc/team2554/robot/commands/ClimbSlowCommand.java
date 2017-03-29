@@ -17,11 +17,14 @@ public class ClimbSlowCommand extends Command {
     // Called when a button calls the Command
     public void start(){
     	Robot.climber.spinSlow();
+    	Robot.gyro.setClimbView(true);
+    	Robot.gyro.setGearView(false);
     }
     
     // Called when a button stops calling the Command
     public void cancel(){
     	Robot.climber.stop();
+    	Robot.gyro.setClimbView(false);
     }
     
     // Called just before this Command runs the first time
@@ -44,5 +47,7 @@ public class ClimbSlowCommand extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	Robot.climber.stop();
+    	Robot.gyro.setClimbView(false);
     }
 }

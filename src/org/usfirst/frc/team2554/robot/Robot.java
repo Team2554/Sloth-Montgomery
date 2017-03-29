@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2554.robot;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Command;
@@ -33,6 +34,9 @@ public class Robot extends IterativeRobot {
 	//VARIABLES
 	double Xaxis, Yaxis, Zaxis;
 	double sensitivity;
+	double gyroDeg;
+	
+	//COMMANDS
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
@@ -51,6 +55,9 @@ public class Robot extends IterativeRobot {
 		oi.climbViewButton.whileHeld(new ClimbView());
 		oi.gearViewButton.whileHeld(new GearView());
 		
+		CameraServer.getInstance().startAutomaticCapture(0);
+		CameraServer.getInstance().startAutomaticCapture(1);
+		Robot.gyro.calibrate();
 //		chooser.addDefault("Default Auto", );
 //		 chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
@@ -122,17 +129,19 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		if(oi.controller.getRawButton(oi.sensitivityLowButtonNum))
+		if(oi.controller.getRawButton(oi.gearViewButtonNum) || oi.controller.getRawButton(oi.sensitivityLowButtonNum))
 			sensitivity = 0.5;
 		else
 			sensitivity = 0.9;
 		
-		if (isNotDeadzone(oi.getRawAxis(0)))
+		if (isNotDeadzone(oi.getRawAxis(0))) {
 			Xaxis = oi.getRawAxis(0);
+			System.out.println("Xaxis: " + Xaxis ); }
 		else
 			Xaxis = 0.0;
-		if (isNotDeadzone(oi.getRawAxis(1)))
+		if (isNotDeadzone(oi.getRawAxis(1))) {
 			Yaxis = oi.getRawAxis(1);
+			System.out.println("Yaxis: " + Yaxis ); }
 		else
 			Yaxis = 0.0;
 		if (isNotDeadzone(oi.getRawAxis(2))) {
@@ -140,10 +149,15 @@ public class Robot extends IterativeRobot {
 				Zaxis = 0;
 			else
 				Zaxis = oi.getRawAxis(2);
+			System.out.println("Zaxis: " + Zaxis );
 		}
 		else
 			Zaxis = 0.0;
 		//gyro-less drive is toggled on/off with button 7
+		if (oi.controller.getRawButton(oi.gearViewButtonNum))
+			gyroDeg = 0.0;
+		else
+			gyroDeg = Robot.gyro.get();
 		drive( Xaxis, Yaxis, Zaxis, sensitivity, Robot.gyro.get());
 	}
 
@@ -155,11 +169,10 @@ public class Robot extends IterativeRobot {
 		LiveWindow.run();
 	}
 	public boolean isNotDeadzone(double a){
-		return a > 0.15 || -a < -0.15;
+		return Math.abs(a) > 0.15;
 	}
 	public void drive(double x, double y, double rotation, double multiplier, double gyroDeg) {
-		myRobot.mecanumDrive_Cartesian(x * multiplier, y * multiplier, rotation * multiplier, Robot.gyro.get());
-
+		myRobot.mecanumDrive_Cartesian(x * multiplier, y * multiplier, rotation * multiplier, gyroDeg);
 	}
 	
 }
