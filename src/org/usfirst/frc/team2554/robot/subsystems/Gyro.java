@@ -21,7 +21,6 @@ public class Gyro extends Subsystem {
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
-    	setDefaultCommand(new ResetGyro());
     }
     public void calibrate(){
     	gyro.calibrate();
@@ -52,14 +51,17 @@ public class Gyro extends Subsystem {
     	return isGearView;
     }
     public double get(){
+    	//System.out.println(isGearView+"|"+isClimbView+"|"+isGyro);
     	if(isGearView)
     		return 180; //Change Angle
-    	else
+    		
+    	else{
     		if(isClimbView)
     			return 0; //Change Angle
     		else
     			if(isGyro)
-    				return gyro.getAngle();
+    				return (gyro.getAngle()+180)%360;
+    	}
     	return 0;
     }
 }

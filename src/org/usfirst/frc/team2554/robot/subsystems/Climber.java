@@ -31,5 +31,9 @@ public class Climber extends Subsystem {
     	victorA.set(0);
     	victorB.set(0);
     }
+    public void spinReverse(){
+    	victorA.set(-0.3);
+    	victorB.set(-0.3);
+    }
 }
 

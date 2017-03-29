@@ -1,5 +1,7 @@
 package org.usfirst.frc.team2554.robot;
 
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking

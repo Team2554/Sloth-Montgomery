@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -34,7 +35,6 @@ public class Robot extends IterativeRobot {
 	//VARIABLES
 	double Xaxis, Yaxis, Zaxis;
 	double sensitivity;
-	double gyroDeg;
 	
 	//COMMANDS
 	Command autonomousCommand;
@@ -103,6 +103,7 @@ public class Robot extends IterativeRobot {
 		// schedule the autonomous command (example)
 		if (autonomousCommand != null)
 			autonomousCommand.start();
+		//Robot.gyro.calibrate();
 	}
 
 	/**
@@ -111,6 +112,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
+		drive( 0.0, .4, 0, 1, 0.0);
 	}
 
 	@Override
@@ -129,19 +131,25 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		if(oi.controller.getRawButton(oi.gearViewButtonNum) || oi.controller.getRawButton(oi.sensitivityLowButtonNum))
-			sensitivity = 0.5;
+		if(oi.controller.getRawAxis(2) > 0.6)
+			climber.spinReverse();
+		if(oi.controller.getRawAxis(3) > 0.6)
+			climber.stop();
+		if(oi.joystick.getRawButton(oi.gearViewButtonNum) || oi.joystick.getRawButton(oi.sensitivityLowButtonNum) || oi.climbSlowTrigger.get() || oi.climbFastTrigger.get()){
+			sensitivity = 0.2;
+	//		System.out.println("Hohohoho");
+		}
 		else
 			sensitivity = 0.9;
-		
-		if (isNotDeadzone(oi.getRawAxis(0))) {
+		//System.out.println(oi.controller.getRawButton(oi.gearViewButtonNum)+"|"+oi.controller.getRawButton(oi.sensitivityLowButtonNum));
+		if (isNotDeadzone(oi.getRawAxis(0))) //{
 			Xaxis = oi.getRawAxis(0);
-			System.out.println("Xaxis: " + Xaxis ); }
+		//	System.out.println("Xaxis: " + Xaxis ); }
 		else
 			Xaxis = 0.0;
-		if (isNotDeadzone(oi.getRawAxis(1))) {
+		if (isNotDeadzone(oi.getRawAxis(1))) //{
 			Yaxis = oi.getRawAxis(1);
-			System.out.println("Yaxis: " + Yaxis ); }
+		//	System.out.println("Yaxis: " + Yaxis ); }
 		else
 			Yaxis = 0.0;
 		if (isNotDeadzone(oi.getRawAxis(2))) {
@@ -149,16 +157,28 @@ public class Robot extends IterativeRobot {
 				Zaxis = 0;
 			else
 				Zaxis = oi.getRawAxis(2);
-			System.out.println("Zaxis: " + Zaxis );
+		//	System.out.println("Zaxis: " + Zaxis );
 		}
 		else
 			Zaxis = 0.0;
 		//gyro-less drive is toggled on/off with button 7
-		if (oi.controller.getRawButton(oi.gearViewButtonNum))
-			gyroDeg = 0.0;
-		else
-			gyroDeg = Robot.gyro.get();
-		drive( Xaxis, Yaxis, Zaxis, sensitivity, Robot.gyro.get());
+		LiftTracker.updateTable();
+		if(!oi.joystick.getRawButton(5))
+			drive( Xaxis, Yaxis, Zaxis, sensitivity, Robot.gyro.get());
+		else{
+			if(LiftTracker.returnWeightedX() > LiftTracker.center + 20){
+				myRobot.mecanumDrive_Cartesian(0, 0, 0.5,0);
+				System.out.println("Turn Left");
+			}
+			if(LiftTracker.returnWeightedX() < LiftTracker.center - 20){
+				myRobot.mecanumDrive_Cartesian(0, 0, -0.5, 0);
+				System.out.println("Turn Right");
+			}
+			else{
+				myRobot.mecanumDrive_Cartesian(0, 0, 0, 0);
+				System.out.println("Do Nothing");
+			}
+		}
 	}
 
 	/**
