@@ -1,16 +1,15 @@
-
 package org.usfirst.frc.team2554.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.usfirst.frc.team2554.robot.subsystems.Climber;
-import org.usfirst.frc.team2554.robot.subsystems.ExampleSubsystem;
-import org.usfirst.frc.team2554.robot.subsystems.Gyro;
+import org.usfirst.frc.team2554.robot.commands.*;
+import org.usfirst.frc.team2554.robot.subsystems.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,9 +19,20 @@ import org.usfirst.frc.team2554.robot.subsystems.Gyro;
  * directory.
  */
 public class Robot extends IterativeRobot {
+	public RobotDrive myRobot;
+	//SUBSYSTEMS
 	public static final Climber climber = new Climber();
-	public static OI oi;
 	public static final Gyro gyro = new Gyro();
+	
+	//OPERATOR INPUT
+	public static OI oi;
+	
+	//CONSTANTS
+	public static final double DEADZONE = 0.15;
+	
+	//VARIABLES
+	double Xaxis, Yaxis, Zaxis;
+	double sensitivity;
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
@@ -32,10 +42,17 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		myRobot = new RobotDrive(RobotMap.driveTrain[0], RobotMap.driveTrain[1], RobotMap.driveTrain[2], RobotMap.driveTrain[3]);
 		oi = new OI();
+		oi.climbSlowTrigger.whileActive(new ClimbSlowCommand());
+		oi.climbFastTrigger.whileActive(new ClimbFastCommand());
+		oi.noGyroButton.whileHeld(new GyroOff());
+		oi.resetGyroButton.whileHeld(new ResetGyro());
+		oi.climbViewButton.whileHeld(new ClimbView());
+		oi.gearViewButton.whileHeld(new GearView());
 		
-	//	chooser.addDefault("Default Auto", );
-		// chooser.addObject("My Auto", new MyAutoCommand());
+//		chooser.addDefault("Default Auto", );
+//		 chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
 	}
 
@@ -105,6 +122,29 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		if(oi.controller.getRawButton(oi.sensitivityLowButtonNum))
+			sensitivity = 0.5;
+		else
+			sensitivity = 0.9;
+		
+		if (isNotDeadzone(oi.getRawAxis(0)))
+			Xaxis = oi.getRawAxis(0);
+		else
+			Xaxis = 0.0;
+		if (isNotDeadzone(oi.getRawAxis(1)))
+			Yaxis = oi.getRawAxis(1);
+		else
+			Yaxis = 0.0;
+		if (isNotDeadzone(oi.getRawAxis(2))) {
+			if(oi.controller.getRawButton(oi.noTurnButtonNum))
+				Zaxis = 0;
+			else
+				Zaxis = oi.getRawAxis(2);
+		}
+		else
+			Zaxis = 0.0;
+		//gyro-less drive is toggled on/off with button 7
+		drive( Xaxis, Yaxis, Zaxis, sensitivity, Robot.gyro.get());
 	}
 
 	/**
@@ -114,4 +154,12 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		LiveWindow.run();
 	}
+	public boolean isNotDeadzone(double a){
+		return a > 0.15 || -a < -0.15;
+	}
+	public void drive(double x, double y, double rotation, double multiplier, double gyroDeg) {
+		myRobot.mecanumDrive_Cartesian(x * multiplier, y * multiplier, rotation * multiplier, Robot.gyro.get());
+
+	}
+	
 }

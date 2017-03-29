@@ -15,6 +15,9 @@ import org.usfirst.frc.team2554.robot.triggers.ClimbSlowTrigger;
 public class OI {
 	public Joystick controller = new Joystick(0);
 	public Joystick joystick = new Joystick(1);
+	public double getRawAxis(int axis) {
+		return joystick.getRawAxis(axis);
+	}
 	//Controller Button
 	final public int[] climbSlowButtonNum = {1,2};
 	final public int[] climbFastButtonNum = {3,4};
@@ -25,7 +28,8 @@ public class OI {
 	final public int resetGyroButtonNum  = 4;
 	final public int climbViewButtonNum = 5;
 	final public int gearViewButtonNum = 6;
-	//Button
+	final public int sensitivityLowButtonNum = 1;
+	//Button Objects
 	public Button resetGyroButton = new JoystickButton(joystick, resetGyroButtonNum);
 	public Button noGyroButton = new JoystickButton(joystick,noGyroButtonNum);
 	public Button noTurnButton = new JoystickButton(joystick,noTurnButtonNum);
