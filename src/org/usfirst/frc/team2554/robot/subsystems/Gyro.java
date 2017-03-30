@@ -1,7 +1,5 @@
 package org.usfirst.frc.team2554.robot.subsystems;
 
-import org.usfirst.frc.team2554.robot.commands.ResetGyro;
-
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.command.Subsystem;
 

@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -112,7 +111,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		drive( 0.0, .4, 0, 1, 0.0);
+		drive( 0.0, .4, 0, 1, 0.0 );
 	}
 
 	@Override
@@ -137,19 +136,15 @@ public class Robot extends IterativeRobot {
 			climber.stop();
 		if(oi.joystick.getRawButton(oi.gearViewButtonNum) || oi.joystick.getRawButton(oi.sensitivityLowButtonNum) || oi.climbSlowTrigger.get() || oi.climbFastTrigger.get()){
 			sensitivity = 0.2;
-	//		System.out.println("Hohohoho");
 		}
 		else
 			sensitivity = 0.9;
-		//System.out.println(oi.controller.getRawButton(oi.gearViewButtonNum)+"|"+oi.controller.getRawButton(oi.sensitivityLowButtonNum));
-		if (isNotDeadzone(oi.getRawAxis(0))) //{
+		if (isNotDeadzone(oi.getRawAxis(0)))
 			Xaxis = oi.getRawAxis(0);
-		//	System.out.println("Xaxis: " + Xaxis ); }
 		else
 			Xaxis = 0.0;
-		if (isNotDeadzone(oi.getRawAxis(1))) //{
+		if (isNotDeadzone(oi.getRawAxis(1)))
 			Yaxis = oi.getRawAxis(1);
-		//	System.out.println("Yaxis: " + Yaxis ); }
 		else
 			Yaxis = 0.0;
 		if (isNotDeadzone(oi.getRawAxis(2))) {
@@ -157,12 +152,13 @@ public class Robot extends IterativeRobot {
 				Zaxis = 0;
 			else
 				Zaxis = oi.getRawAxis(2);
-		//	System.out.println("Zaxis: " + Zaxis );
 		}
 		else
 			Zaxis = 0.0;
-		//gyro-less drive is toggled on/off with button 7
+		
 		LiftTracker.updateTable();
+		
+		//Vision :^)
 		if(!oi.joystick.getRawButton(5))
 			drive( Xaxis, Yaxis, Zaxis, sensitivity, Robot.gyro.get());
 		else{

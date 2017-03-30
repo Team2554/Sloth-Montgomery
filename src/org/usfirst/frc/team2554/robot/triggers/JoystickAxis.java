@@ -1,7 +1,5 @@
 package org.usfirst.frc.team2554.robot.triggers;
 
-import org.usfirst.frc.team2554.robot.Robot;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 
