@@ -53,12 +53,12 @@ public class Robot extends IterativeRobot {
 		oi.resetGyroButton.whileHeld(new ResetGyro());
 		oi.climbViewButton.whileHeld(new ClimbView());
 		oi.gearViewButton.whileHeld(new GearView());
+		oi.climbReverseButton.whileHeld(new ClimbReverse());
 		
 		CameraServer.getInstance().startAutomaticCapture(0);
 		CameraServer.getInstance().startAutomaticCapture(1);
 		Robot.gyro.calibrate();
-//		chooser.addDefault("Default Auto", );
-//		 chooser.addObject("My Auto", new MyAutoCommand());
+		
 		SmartDashboard.putData("Auto mode", chooser);
 	}
 

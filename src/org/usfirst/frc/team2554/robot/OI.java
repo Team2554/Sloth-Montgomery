@@ -21,6 +21,7 @@ public class OI {
 	//Controller Button
 	final public int[] climbSlowButtonNum = {1,2};
 	final public int[] climbFastButtonNum = {3,4};
+	final public int climbReverseButtonNum = 5;
 	//Joystick Button
 	final public int noGyroButtonNum = 7;
 	final public int noTurnButtonNum = 8;
@@ -34,35 +35,8 @@ public class OI {
 	public Button noTurnButton = new JoystickButton(joystick,noTurnButtonNum);
 	public Button climbViewButton = new JoystickButton(joystick,climbViewButtonNum);
 	public Button gearViewButton = new JoystickButton(joystick, gearViewButtonNum);
+	public Button climbReverseButton = new JoystickButton(controller, climbReverseButtonNum);
 	//Triggers
 	public Trigger climbSlowTrigger= new ClimbSlowTrigger();
 	public Trigger climbFastTrigger = new ClimbFastTrigger();
-	
-	//// CREATING BUTTONS
-	// One type of button is a joystick button which is any button on a
-	//// joystick.
-	// You create one by telling it which joystick it's on and which button
-	// number it is.
-	// Joystick stick = new Joystick(port);
-	// Button button = new JoystickButton(stick, buttonNumber);
-
-	// There are a few additional built in buttons you can use. Additionally,
-	// by subclassing Button you can create custom triggers and bind those to
-	// commands the same as any other Button.
-
-	//// TRIGGERING COMMANDS WITH BUTTONS
-	// Once you have a button, it's trivial to bind it to a button in one of
-	// three ways:
-
-	// Start the command when the button is pressed and let it run the command
-	// until it is finished as determined by it's isFinished method.
-	// button.whenPressed(new ExampleCommand());
-
-	// Run the command while the button is being held down and interrupt it once
-	// the button is released.
-	// button.whileHeld(new ExampleCommand());
-
-	// Start the command when the button is released and let it run the command
-	// until it is finished as determined by it's isFinished method.
-	// button.whenReleased(new ExampleCommand());
 }
