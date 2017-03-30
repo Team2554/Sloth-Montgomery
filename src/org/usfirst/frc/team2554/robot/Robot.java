@@ -132,7 +132,7 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().run();
 
 		if(oi.joystick.getRawButton(oi.gearViewButtonNum) || oi.joystick.getRawButton(oi.sensitivityLowButtonNum) || oi.climbSlowTrigger.get() || oi.climbFastTrigger.get()){
-			sensitivity = 0.2;
+			sensitivity = 0.3;
 		}
 		else
 			sensitivity = 0.9;
@@ -146,32 +146,13 @@ public class Robot extends IterativeRobot {
 			Yaxis = 0.0;
 		if (isNotDeadzone(oi.getRawAxis(2))) {
 			if(oi.controller.getRawButton(oi.noTurnButtonNum))
-				Zaxis = 0;
+				Zaxis = 0.0;
 			else
 				Zaxis = oi.getRawAxis(2);
 		}
 		else
 			Zaxis = 0.0;
-		
-		LiftTracker.updateTable();
-		
-		//Vision :^)
-		if(!oi.joystick.getRawButton(5))
 			drive( Xaxis, Yaxis, Zaxis, sensitivity, Robot.gyro.get());
-		else{
-			if(LiftTracker.returnWeightedX() > LiftTracker.center + 20){
-				myRobot.mecanumDrive_Cartesian(0, 0, 0.5,0);
-				System.out.println("Turn Left");
-			}
-			else if(LiftTracker.returnWeightedX() < LiftTracker.center - 20){
-				myRobot.mecanumDrive_Cartesian(0, 0, -0.5, 0);
-				System.out.println("Turn Right");
-			}
-			else{
-				myRobot.mecanumDrive_Cartesian(0, 0, 0, 0);
-				System.out.println("Do Nothing");
-			}
-		}
 	}
 
 	/**
