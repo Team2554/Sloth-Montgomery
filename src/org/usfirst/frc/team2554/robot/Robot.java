@@ -170,7 +170,7 @@ public class Robot extends IterativeRobot {
 				myRobot.mecanumDrive_Cartesian(0, 0, 0.5,0);
 				System.out.println("Turn Left");
 			}
-			if(LiftTracker.returnWeightedX() < LiftTracker.center - 20){
+			else if(LiftTracker.returnWeightedX() < LiftTracker.center - 20){
 				myRobot.mecanumDrive_Cartesian(0, 0, -0.5, 0);
 				System.out.println("Turn Right");
 			}
