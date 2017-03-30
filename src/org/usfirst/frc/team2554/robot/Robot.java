@@ -130,10 +130,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		if(oi.controller.getRawAxis(2) > 0.6)
-			climber.spinReverse();
-		if(oi.controller.getRawAxis(3) > 0.6)
-			climber.stop();
+
 		if(oi.joystick.getRawButton(oi.gearViewButtonNum) || oi.joystick.getRawButton(oi.sensitivityLowButtonNum) || oi.climbSlowTrigger.get() || oi.climbFastTrigger.get()){
 			sensitivity = 0.2;
 		}
