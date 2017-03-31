@@ -3,6 +3,7 @@ package org.usfirst.frc.team2554.robot;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -21,21 +22,22 @@ import org.usfirst.frc.team2554.robot.subsystems.*;
  */
 public class Robot extends IterativeRobot {
 	public RobotDrive myRobot;
-	//SUBSYSTEMS
+	Timer timer;
+	// SUBSYSTEMS
 	public static final Climber climber = new Climber();
 	public static final Gyro gyro = new Gyro();
-	
-	//OPERATOR INPUT
+
+	// OPERATOR INPUT
 	public static OI oi;
-	
-	//CONSTANTS
+
+	// CONSTANTS
 	public static final double DEADZONE = 0.15;
-	
-	//VARIABLES
+
+	// VARIABLES
 	double Xaxis, Yaxis, Zaxis;
 	double sensitivity;
-	
-	//COMMANDS
+
+	// COMMANDS
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
@@ -45,20 +47,22 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		myRobot = new RobotDrive(RobotMap.driveTrain[0], RobotMap.driveTrain[1], RobotMap.driveTrain[2], RobotMap.driveTrain[3]);
+		myRobot = new RobotDrive(RobotMap.driveTrain[0], RobotMap.driveTrain[1], RobotMap.driveTrain[2],
+				RobotMap.driveTrain[3]);
 		oi = new OI();
+		timer = new Timer();
 		oi.climbSlowTrigger.whileActive(new ClimbSlowCommand());
 		oi.climbFastTrigger.whileActive(new ClimbFastCommand());
 		oi.noGyroButton.whileHeld(new GyroOff());
 		oi.resetGyroButton.whileHeld(new ResetGyro());
 		oi.climbViewButton.whileHeld(new ClimbView());
 		oi.gearViewButton.whileHeld(new GearView());
-		oi.climbReverseButton.whileHeld(new ClimbReverse());
-		
+		//oi.climbReverseButton.whileHeld(new ClimbReverse()); taken out so we don't accidentally press it and break the climber
+
 		CameraServer.getInstance().startAutomaticCapture(0);
 		CameraServer.getInstance().startAutomaticCapture(1);
 		Robot.gyro.calibrate();
-		
+
 		SmartDashboard.putData("Auto mode", chooser);
 	}
 
@@ -90,7 +94,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autonomousCommand = chooser.getSelected();
+		// autonomousCommand = chooser.getSelected();
 
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -100,9 +104,11 @@ public class Robot extends IterativeRobot {
 		 */
 
 		// schedule the autonomous command (example)
-		if (autonomousCommand != null)
-			autonomousCommand.start();
-		//Robot.gyro.calibrate();
+		// if (autonomousCommand != null)
+		// autonomousCommand.start();
+		// Robot.gyro.calibrate();
+		timer.reset();
+		timer.start();
 	}
 
 	/**
@@ -111,7 +117,10 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		drive( 0.0, .4, 0, 1, 0.0 );
+		if (timer.get() < 5)
+			myRobot.mecanumDrive_Cartesian(0, 0.5, 0, 0);
+		else
+			myRobot.mecanumDrive_Cartesian(0, 0, 0, 0);
 	}
 
 	@Override
@@ -131,11 +140,11 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 
-		if(oi.joystick.getRawButton(oi.gearViewButtonNum) || oi.joystick.getRawButton(oi.sensitivityLowButtonNum) || oi.climbSlowTrigger.get() || oi.climbFastTrigger.get()){
+		if (oi.joystick.getRawButton(oi.gearViewButtonNum) || oi.joystick.getRawButton(oi.sensitivityLowButtonNum)
+				|| oi.climbSlowTrigger.get() || oi.climbFastTrigger.get()) {
 			sensitivity = 0.3;
-		}
-		else
-			sensitivity = 0.9;
+		} else
+			sensitivity = 0.95;
 		if (isNotDeadzone(oi.getRawAxis(0)))
 			Xaxis = oi.getRawAxis(0);
 		else
@@ -145,14 +154,13 @@ public class Robot extends IterativeRobot {
 		else
 			Yaxis = 0.0;
 		if (isNotDeadzone(oi.getRawAxis(2))) {
-			if(oi.controller.getRawButton(oi.noTurnButtonNum))
+			if (oi.controller.getRawButton(oi.noTurnButtonNum))
 				Zaxis = 0.0;
 			else
 				Zaxis = oi.getRawAxis(2);
-		}
-		else
+		} else
 			Zaxis = 0.0;
-			drive( Xaxis, Yaxis, Zaxis, sensitivity, Robot.gyro.get());
+		drive(Xaxis, Yaxis, Zaxis, sensitivity, Robot.gyro.get());
 	}
 
 	/**
@@ -162,11 +170,13 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		LiveWindow.run();
 	}
-	public boolean isNotDeadzone(double a){
+
+	public boolean isNotDeadzone(double a) {
 		return Math.abs(a) > 0.15;
 	}
+
 	public void drive(double x, double y, double rotation, double multiplier, double gyroDeg) {
 		myRobot.mecanumDrive_Cartesian(x * multiplier, y * multiplier, rotation * multiplier, gyroDeg);
 	}
-	
+
 }
